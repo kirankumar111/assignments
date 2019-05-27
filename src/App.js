@@ -1,26 +1,62 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import { Route } from 'react-router-dom'
+import * as BooksAPI from './booksapi'
+import './App.css'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+//Components
+import SearchPage from './bookshelve/searchpage'
+import BookList from './bookshelve/booklist'
+
+export default class BooksApp extends Component {
+
+  state = {
+    books: []
+  }
+
+  componentDidMount(){
+    this.fetchMyBooks()
+  }
+
+  fetchMyBooks = () => {
+    BooksAPI.getAll().then((books) => this.setState({ books }))
+  }
+
+  changeShelf = (id,shelf) => {
+    BooksAPI.update({id},shelf).then(()=>{
+      this.fetchMyBooks()
+    })
+  }
+
+  render() {
+    return (
+      <div className="app">
+          <Route
+            exact
+            path="/search"
+            render={({history}) => (
+              <SearchPage
+                myBooks={this.state.books}
+                onShelfChange={(id,shelf)=>{
+                  this.changeShelf(id,shelf)
+                  history.push('/')
+                }}
+              />
+            )}
+          />
+
+          <Route
+            exact
+            path="/"
+            render={()=>(
+              <BookList
+                books={this.state.books}
+                onShelfChange={(id,shelf)=>{
+                  this.changeShelf(id,shelf)
+                }}
+              />
+            )}
+          />
+      </div>
+    )
+  }
 }
-
-export default App;
