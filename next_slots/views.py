@@ -119,7 +119,7 @@ def get_next_n_slots(week_config, current_time, n=10):
         for idx,week in enumerate(week_config):
             slot_len=slot_len+len(week)
             if week:
-                for slot_pair in week_config[idx]:
+                for slot_pair in week:
                     temp_dict={}
                     temp_date = (current_time + datetime.timedelta(days=idx+1)).strftime("%Y-%m-%d")
                     start_datetime_str = str(temp_date)+' '+slot_pair["start_time"]+':00'
